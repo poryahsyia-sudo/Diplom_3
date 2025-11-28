@@ -1,32 +1,60 @@
-import re
+import pytest
 import allure
-from pages.base_page import BasePage
-from pages.locators import OrderFeedPageLocators
+from pages.main_page import MainPage
+from pages.order_feed_page import OrderFeedPage
+from pages.urls import BASE_URL
 
 
-class OrderFeedPage(BasePage):
+@allure.feature("Лента заказов")
+class TestOrderFeed:
 
-    def _to_int(self, text: str) -> int:
-        digits = re.sub(r"[^\d]", "", text or "")
-        return int(digits) if digits else 0
+    @allure.story("Новый заказ появляется в разделе 'В работе'")
+    @allure.title("Проверка появления нового заказа")
+    def test_new_order_in_work(self, driver, login):
+        main = MainPage(driver)
+        feed = OrderFeedPage(driver)
+        main.add_ingredient_to_constructor("top")
+        main.place_order()
+        main.wait_for_order_number()
+        order_number = main.get_order_number()
+        main.close_order_modal()
+        main.go_to_order_feed()
+        feed.wait_until(lambda d: order_number in d.page_source, timeout=30)
+        assert order_number in driver.page_source, \
+            f"Заказ {order_number} не найден в ленте заказов"
 
-    @allure.step("Получение общего счётчика 'Выполнено за всё время'")
-    def get_total_done(self, timeout=40):
-        elements = self.find_all(OrderFeedPageLocators.TOTAL_COUNTER, timeout)
-        if elements:
-            raw = elements[0].text
-            return self._to_int(raw)
-        raise Exception("Счётчик 'Выполнено за всё время' не найден")
+    @allure.story("Счётчик 'Выполнено за сегодня'")
+    @allure.title("Проверка увеличения счётчика за сегодня после оформления заказа")
+    def test_completed_today_counter(self, driver, login):
+        main = MainPage(driver)
+        feed = OrderFeedPage(driver)
+        main.go_to_order_feed()
+        counter_before = feed.get_today_done()
+        main.go_to_constructor()
+        main.add_ingredient_to_constructor("top")
+        main.place_order()
+        main.wait_for_order_number()
+        main.close_order_modal()
+        main.go_to_order_feed()
+        feed.wait_counter_greater(feed.get_today_done, counter_before, timeout=30)
+        counter_after = feed.get_today_done()
+        assert counter_after >= counter_before + 1, \
+            f"Счётчик 'Выполнено за сегодня' не увеличился: before={counter_before}, after={counter_after}"
 
-    @allure.step("Получение счётчика 'Выполнено за сегодня'")
-    def get_today_done(self, timeout=15):
-        raw = self.get_text(OrderFeedPageLocators.TODAY_COUNTER, timeout)
-        return self._to_int(raw)
-
-    @allure.step("Ожидание увеличения счётчика")
-    def wait_counter_greater(self, getter, baseline, timeout=30):
-        self.wait_until(lambda d: getter() > baseline, timeout)
-
-    @allure.step("Получение списка заказов в работе")
-    def get_in_progress_orders(self, timeout=15):
-        return self.find_all(OrderFeedPageLocators.IN_PROGRESS_ORDERS, timeout)
+    @allure.story("Счётчик 'Выполнено за всё время'")
+    @allure.title("Проверка увеличения общего счётчика после оформления заказа")
+    def test_completed_all_time_counter(self, driver, login):
+        main = MainPage(driver)
+        feed = OrderFeedPage(driver)
+        main.go_to_order_feed()
+        counter_before = feed.get_total_done()
+        main.go_to_constructor()
+        main.add_ingredient_to_constructor("top")
+        main.place_order()
+        main.wait_for_order_number()
+        main.close_order_modal()
+        main.go_to_order_feed()
+        feed.wait_counter_greater(feed.get_total_done, counter_before, timeout=60)
+        counter_after = feed.get_total_done()
+        assert counter_after >= counter_before + 1, \
+            f"Счётчик 'Выполнено за всё время' не увеличился: before={counter_before}, after={counter_after}"
