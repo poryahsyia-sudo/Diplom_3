@@ -63,8 +63,30 @@ class BasePage:
         )
 
     @allure.step("Перетаскивание элемента мышью")
-    def drag_and_drop(self, source_element, target_element):
-        self.scroll_into_view(source_element)
-        self.scroll_into_view(target_element)
-        actions = ActionChains(self.driver)
-        actions.click_and_hold(source_element).move_to_element(target_element).pause(0.2).release().perform()
+    def drag_and_drop(self, ingredient, constructor):
+        self.scroll_into_view(ingredient)
+        self.scroll_into_view(constructor)
+        js = """
+            const src = arguments[0];
+            const tgt = arguments[1];
+            const dataTransfer = new DataTransfer();
+            function fire(el, type, dt){
+                const e = new DragEvent(type, {
+                    bubbles: true,
+                    cancelable: true,
+                    dataTransfer: dt
+                });
+                el.dispatchEvent(e);
+            }
+            fire(src, 'dragstart', dataTransfer);
+            fire(tgt, 'dragenter', dataTransfer);
+            fire(tgt, 'dragover', dataTransfer);
+            fire(tgt, 'drop', dataTransfer);
+            fire(src, 'dragend', dataTransfer);
+        """
+        try:
+            self.driver.execute_script(js, ingredient, constructor)
+        except Exception:
+            # Fallback: классический ActionChains
+            actions = ActionChains(self.driver)
+            actions.click_and_hold(ingredient).move_to_element(constructor).pause(0.2).release().perform()
