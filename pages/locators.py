@@ -17,7 +17,7 @@ class OrderFeedPageLocators:
     TODAY_COUNTER = (By.XPATH, "//p[contains(text(),'Выполнено за сегодня')]/following::p[contains(@class,'OrderFeed_number__')][1]")
     IN_PROGRESS_ORDERS = (By.XPATH, "//h3[text()='В работе']/following-sibling::ul/li")
     TOTAL_COUNTER = (By.XPATH, "//p[contains(@class,'digits-large')]")
-    PARENT_DIV_PATH = "./ancestor::div[1]" # Вспомогательный относительный путь 
+    COUNTER_LABEL = (By.XPATH, "preceding-sibling::p")
 
 class LoginPageLocators:
     EMAIL_FIELD = (By.XPATH, "//label[text()='Email']/following-sibling::input")
