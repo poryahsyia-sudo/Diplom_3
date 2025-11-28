@@ -13,12 +13,17 @@ class OrderFeedPage(BasePage):
     @allure.step("Получение общего счётчика 'Выполнено за всё время'")
     def get_total_done(self, timeout=40):
         self.wait_for_presence(OrderFeedPageLocators.TOTAL_COUNTER, timeout)
-        elements = self.find_all(OrderFeedPageLocators.TOTAL_COUNTER, timeout)
-        if elements:
-            raw = elements[0].text
-            digits = ''.join(ch for ch in raw if ch.isdigit())
-            return int(digits) if digits else 0
-        raise Exception("Счётчик 'Выполнено за всё время' не найден")
+        elements = self.find_all(OrderFeedPageLocators.TOTAL_COUNTER)
+        for el in elements:
+            try:
+                parent = el.find_element(By.XPATH, OrderFeedPageLocators.PARENT_DIV_PATH)
+                if "за всё время" in parent.text.lower():
+                    raw = el.text
+                    digits = ''.join(ch for ch in raw if ch.isdigit())
+                    return int(digits) if digits else 0
+            except Exception:
+                continue
+        raise Exception("Не найден блок со счётчиком 'Выполнено за всё время'")
 
 
     @allure.step("Получение счётчика 'Выполнено за сегодня'")

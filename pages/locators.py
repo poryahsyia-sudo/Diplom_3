@@ -14,12 +14,13 @@ class MainPageLocators:
     ORDER_NUMBER = (By.XPATH, "//h2[contains(@class,'Modal_modal__title') and contains(@class,'digits-large')]")
 
 class OrderFeedPageLocators:
-    TOTAL_COUNTER = (By.XPATH, "//p[normalize-space(text())='Выполнено за всё время:']/following-sibling::p[contains(@class,'digits-large')]")
     TODAY_COUNTER = (By.XPATH, "//p[contains(text(),'Выполнено за сегодня')]/following::p[contains(@class,'OrderFeed_number__')][1]")
     IN_PROGRESS_ORDERS = (By.XPATH, "//h3[text()='В работе']/following-sibling::ul/li")
+    TOTAL_COUNTER = (By.XPATH, "//p[contains(@class,'digits-large')]")
+    PARENT_DIV_PATH = "./ancestor::div[1]" # Вспомогательный относительный путь 
 
 class LoginPageLocators:
-    EMAIL_FIELD = (By.XPATH, "//label[text()='Email']/following-sibling::input")
+    EMAIL_FIELD = (By.XPATH, "//p[contains(@class,'digits-large')]")
     PASSWORD_FIELD = (By.XPATH, "//label[text()='Пароль']/following-sibling::input")
     LOGIN_BUTTON = (By.XPATH, "//button[text()='Войти']")
     ORDER_BUTTON = (By.XPATH, "//button[text()='Оформить заказ']") 
