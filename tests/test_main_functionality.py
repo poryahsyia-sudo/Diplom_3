@@ -14,8 +14,9 @@ class TestMainPage:
         page = MainPage(driver)
         page.open(LOGIN_URL)
         page.go_to_constructor()
-        assert page.is_visible(page.find(page.locators.FIRST_INGREDIENT).locator), \
+        assert page.is_visible(page.locators.FIRST_INGREDIENT), \
             "Первый ингредиент не появился после перехода в Конструктор"
+
 
     @allure.story("Переход по кнопке 'Лента заказов'")
     @allure.title("Проверка перехода в ленту заказов")
