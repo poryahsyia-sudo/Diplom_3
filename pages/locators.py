@@ -20,7 +20,7 @@ class OrderFeedPageLocators:
     PARENT_DIV_PATH = "./ancestor::div[1]" # Вспомогательный относительный путь 
 
 class LoginPageLocators:
-    EMAIL_FIELD = (By.XPATH, "//p[contains(@class,'digits-large')]")
+    EMAIL_FIELD = (By.XPATH, "//label[text()='Email']/following-sibling::input")
     PASSWORD_FIELD = (By.XPATH, "//label[text()='Пароль']/following-sibling::input")
     LOGIN_BUTTON = (By.XPATH, "//button[text()='Войти']")
     ORDER_BUTTON = (By.XPATH, "//button[text()='Оформить заказ']") 
