@@ -31,6 +31,12 @@ class BasePage:
             EC.visibility_of_element_located(locator)
         )
 
+    @allure.step("Ожидание присутствия элемента в DOM: {1}")
+    def wait_for_presence(self, locator, timeout=15):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located(locator)
+        )   
+
     @allure.step("Ожидание невидимости элемента: {1}")
     def wait_for_invisibility(self, locator, timeout=15):
         return WebDriverWait(self.driver, timeout).until(

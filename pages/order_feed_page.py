@@ -12,7 +12,6 @@ class OrderFeedPage(BasePage):
 
     @allure.step("Получение общего счётчика 'Выполнено за всё время'")
     def get_total_done(self, timeout=40):
-        """Ожидает появления счётчиков и возвращает значение общего количества выполненных заказов."""
         self.wait_for_presence(OrderFeedPageLocators.TOTAL_COUNTER, timeout)
         elements = self.find_all(OrderFeedPageLocators.TOTAL_COUNTER, timeout)
         if elements:
