@@ -17,14 +17,15 @@ class OrderFeedPage(BasePage):
         elements = self.find_all(OrderFeedPageLocators.TOTAL_COUNTER)
         for el in elements:
             try:
-                parent = el.find_element(By.XPATH, OrderFeedPageLocators.PARENT_DIV_PATH)
-                if "за всё время" in parent.text.lower():
+                label = el.find_element(By.XPATH, "preceding-sibling::p")
+                if "за все время" in label.text.lower():
                     raw = el.text
                     digits = ''.join(ch for ch in raw if ch.isdigit())
                     return int(digits) if digits else 0
             except Exception:
                 continue
         raise Exception("Не найден блок со счётчиком 'Выполнено за всё время'")
+
 
 
     @allure.step("Получение счётчика 'Выполнено за сегодня'")
