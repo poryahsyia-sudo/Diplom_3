@@ -2,6 +2,7 @@ import re
 import allure
 from pages.base_page import BasePage
 from pages.locators import OrderFeedPageLocators
+from selenium.webdriver.common.by import By
 
 
 class OrderFeedPage(BasePage):
