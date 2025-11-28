@@ -96,3 +96,16 @@ class BasePage:
             # Fallback: классический ActionChains
             actions = ActionChains(self.driver)
             actions.click_and_hold(ingredient).move_to_element(constructor).pause(0.2).release().perform()
+
+
+    @allure.step("Ожидание увеличения счётчика")
+    def wait_counter_greater(self, counter_method, old_value, timeout=60):
+        def condition(driver):
+            try:
+                return counter_method() > old_value
+            except Exception:
+                return False
+        WebDriverWait(self.driver, timeout, poll_frequency=2).until(
+            condition,
+            f"Счётчик не увеличился в течение {timeout} секунд (было {old_value})"
+        )
