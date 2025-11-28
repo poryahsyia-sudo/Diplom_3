@@ -1,10 +1,11 @@
 import pytest
 import allure
 from pages.main_page import MainPage
-from pages.locators import MainPageLocators
 from pages.urls import BASE_URL, LOGIN_URL
 
+
 @pytest.mark.usefixtures("driver")
+@allure.feature("Основной функционал страницы конструктора")
 class TestMainPage:
 
     @allure.story("Переход по кнопке 'Конструктор'")
@@ -13,7 +14,7 @@ class TestMainPage:
         page = MainPage(driver)
         page.open(LOGIN_URL)
         page.go_to_constructor()
-        assert page.is_visible(MainPageLocators.FIRST_INGREDIENT), \
+        assert page.is_visible(page.find(page.locators.FIRST_INGREDIENT).locator), \
             "Первый ингредиент не появился после перехода в Конструктор"
 
     @allure.story("Переход по кнопке 'Лента заказов'")
@@ -22,7 +23,8 @@ class TestMainPage:
         page = MainPage(driver)
         page.open(BASE_URL)
         page.go_to_order_feed()
-        assert "feed" in page.driver.current_url
+        assert "feed" in page.driver.current_url, \
+            "Переход по кнопке 'Лента заказов' не произошёл"
 
     @allure.story("Модальное окно ингредиента")
     @allure.title("Проверка открытия модального окна ингредиента")
@@ -30,7 +32,8 @@ class TestMainPage:
         page = MainPage(driver)
         page.open(BASE_URL)
         page.open_ingredient_modal()
-        assert page.is_visible(MainPageLocators.MODAL_TITLE), "Модальное окно ингредиента не открылось"
+        assert page.is_visible(page.locators.MODAL_TITLE), \
+            "Модальное окно ингредиента не открылось"
 
     @allure.story("Модальное окно ингредиента")
     @allure.title("Проверка закрытия модального окна ингредиента")
@@ -39,17 +42,16 @@ class TestMainPage:
         page.open(BASE_URL)
         page.open_ingredient_modal()
         page.close_ingredient_modal()
-        assert page.is_not_visible(MainPageLocators.MODAL_TITLE), "Модальное окно ингредиента не закрылось"
+        assert page.is_not_visible(page.locators.MODAL_TITLE), \
+            "Модальное окно ингредиента не закрылось"
 
     @allure.story("Счётчик ингредиента")
     @allure.title("Проверка увеличения счётчика ингредиента при добавлении")
     def test_ingredient_counter(self, driver):
         page = MainPage(driver)
         page.open(BASE_URL)
-        counter_before = int(page.find(MainPageLocators.INGREDIENT_COUNTER).text or 0)
-        ingredient = page.find(MainPageLocators.FIRST_INGREDIENT)
-        constructor = page.find(MainPageLocators.CONSTRUCTOR_TOP)
-        page.drag_and_drop_universal(ingredient, constructor)
-        counter_after = int(page.find(MainPageLocators.INGREDIENT_COUNTER).text or 0)
+        counter_before = int(page.get_text(page.locators.INGREDIENT_COUNTER) or 0)
+        page.add_ingredient_to_constructor("top")
+        counter_after = int(page.get_text(page.locators.INGREDIENT_COUNTER) or 0)
         assert counter_after > counter_before, \
             f"Счётчик ингредиента не увеличился: before={counter_before}, after={counter_after}"
