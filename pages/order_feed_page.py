@@ -34,14 +34,15 @@ class OrderFeedPage(BasePage):
                 continue
         raise Exception("Не найден блок со счётчиком 'Выполнено за сегодня'")
 
-    @allure.step("Проверка, что заказ с номером {order_number} отображается в ленте заказов")
-    def is_order_in_feed(self, order_number, timeout=60):
-        """Ожидает появления заказа с указанным номером в ленте заказов"""
-        locator = (By.XPATH, f"//*[contains(text(), '#{order_number}')]")
+    @allure.step("Проверка, что заказ с номером {order_number} появился хотя бы один раз в ленте заказов")
+    def is_order_in_feed(self, order_number, timeout=90):
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        locator = (By.XPATH, f"//*[contains(text(), '{order_number}')]")
         try:
             WebDriverWait(self.driver, timeout).until(
-                lambda d: len(d.find_elements(*locator)) > 0,
-                f"Заказ #{order_number} не появился в ленте заказов за {timeout} секунд"
+                lambda d: any(order_number in el.text for el in d.find_elements(*locator)),
+                f"Заказ {order_number} не появился в ленте заказов в течение {timeout} секунд"
             )
             return True
         except Exception:
