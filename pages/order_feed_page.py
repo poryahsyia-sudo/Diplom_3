@@ -1,7 +1,8 @@
 import allure
 from pages.base_page import BasePage
 from pages.locators import OrderFeedPageLocators
-from helpers import to_int
+from pages.helpers import to_int
+from selenium.webdriver.common.by import By
 
 
 class OrderFeedPage(BasePage):
@@ -31,3 +32,12 @@ class OrderFeedPage(BasePage):
             except Exception:
                 continue
         raise Exception("Не найден блок со счётчиком 'Выполнено за сегодня'")
+
+    @allure.step("Проверка, что заказ с номером {order_number} отображается в ленте")
+    def is_order_in_feed(self, order_number, timeout=30):
+        locator = (By.XPATH, f"//li[contains(text(), '{order_number}')]")
+        try:
+            self.wait_for_visibility(locator, timeout)
+            return True
+        except Exception:
+            return False
