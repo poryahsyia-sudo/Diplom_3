@@ -14,9 +14,8 @@ class TestMainPage:
         page = MainPage(driver)
         page.open(LOGIN_URL)
         page.go_to_constructor()
-        assert page.is_visible(page.locators.FIRST_INGREDIENT), \
+        assert page.is_first_ingredient_visible(), \
             "Первый ингредиент не появился после перехода в Конструктор"
-
 
     @allure.story("Переход по кнопке 'Лента заказов'")
     @allure.title("Проверка перехода в ленту заказов")
@@ -33,7 +32,7 @@ class TestMainPage:
         page = MainPage(driver)
         page.open(BASE_URL)
         page.open_ingredient_modal()
-        assert page.is_visible(page.locators.MODAL_TITLE), \
+        assert page.is_ingredient_modal_open(), \
             "Модальное окно ингредиента не открылось"
 
     @allure.story("Модальное окно ингредиента")
@@ -43,7 +42,7 @@ class TestMainPage:
         page.open(BASE_URL)
         page.open_ingredient_modal()
         page.close_ingredient_modal()
-        assert page.is_not_visible(page.locators.MODAL_TITLE), \
+        assert page.is_ingredient_modal_closed(), \
             "Модальное окно ингредиента не закрылось"
 
     @allure.story("Счётчик ингредиента")
@@ -51,8 +50,8 @@ class TestMainPage:
     def test_ingredient_counter(self, driver):
         page = MainPage(driver)
         page.open(BASE_URL)
-        counter_before = int(page.get_text(page.locators.INGREDIENT_COUNTER) or 0)
+        counter_before = page.get_ingredient_counter()
         page.add_ingredient_to_constructor("top")
-        counter_after = int(page.get_text(page.locators.INGREDIENT_COUNTER) or 0)
+        counter_after = page.get_ingredient_counter()
         assert counter_after > counter_before, \
             f"Счётчик ингредиента не увеличился: before={counter_before}, after={counter_after}"

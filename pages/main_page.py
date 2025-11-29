@@ -43,12 +43,20 @@ class MainPage(BasePage):
         )
         self.drag_and_drop(ingredient, constructor)
 
+    @allure.step("Проверка, что первый ингредиент виден на странице конструктора")
+    def is_first_ingredient_visible(self, timeout=10):
+        try:
+            self.wait_for_visibility(self.locators.FIRST_INGREDIENT, timeout)
+            return True
+        except Exception:
+            return False
+
     @allure.step("Получение значения счётчика ингредиента")
     def get_ingredient_counter(self):
         text = self.get_text(self.locators.INGREDIENT_COUNTER)
         return int(text) if text.isdigit() else 0
 
-    @allure.step("Ожидание появления модального окна ингредиента")
+    @allure.step("Проверка открытия модального окна ингредиента")
     def is_ingredient_modal_open(self):
         return self.wait_for_visibility(self.locators.MODAL_TITLE)
 
