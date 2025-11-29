@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class MainPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
-        self.locators = MainPageLocators  # доступ к локаторам через self.locators
+        self.locators = MainPageLocators
 
     @allure.step("Открытие главной страницы")
     def open(self, url):
@@ -43,21 +43,18 @@ class MainPage(BasePage):
         )
         self.drag_and_drop(ingredient, constructor)
 
-    @allure.step("Проверка видимости элемента")
-    def is_visible(self, locator, timeout=5):
-        try:
-            self.wait_for_visibility(locator, timeout)
-            return True
-        except Exception:
-            return False
+    @allure.step("Получение значения счётчика ингредиента")
+    def get_ingredient_counter(self):
+        text = self.get_text(self.locators.INGREDIENT_COUNTER)
+        return int(text) if text.isdigit() else 0
 
-    @allure.step("Проверка невидимости элемента")
-    def is_not_visible(self, locator, timeout=5):
-        try:
-            self.wait_for_invisibility(locator, timeout)
-            return True
-        except Exception:
-            return False
+    @allure.step("Ожидание появления модального окна ингредиента")
+    def is_ingredient_modal_open(self):
+        return self.wait_for_visibility(self.locators.MODAL_TITLE)
+
+    @allure.step("Проверка закрытия модального окна ингредиента")
+    def is_ingredient_modal_closed(self):
+        return self.wait_for_invisibility(self.locators.MODAL_TITLE)
 
     @allure.step("Ожидание появления номера заказа")
     def wait_for_order_number(self, timeout=30):
