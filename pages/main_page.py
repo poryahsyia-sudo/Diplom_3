@@ -3,6 +3,8 @@ from pages.base_page import BasePage
 from pages.locators import MainPageLocators
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
+import time
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class MainPage(BasePage):
@@ -67,6 +69,14 @@ class MainPage(BasePage):
     @allure.step("Ожидание появления номера заказа")
     def wait_for_order_number(self, timeout=30):
         self.wait_for_visibility(self.locators.ORDER_NUMBER, timeout)
+
+    @allure.step("Ожидание смены временного номера заказа (9999) на реальный")
+    def wait_for_real_order_number(self, timeout=30):
+        self.wait_for_visibility(self.locators.ORDER_NUMBER, timeout)
+        WebDriverWait(self.driver, timeout).until(
+            lambda d: self.get_order_number() != "9999",
+            "Не дождались появления реального номера заказа"
+        )
 
     @allure.step("Получение номера заказа")
     def get_order_number(self, timeout=30):

@@ -15,7 +15,7 @@ class TestOrderFeed:
         feed = OrderFeedPage(driver)
         main.add_ingredient_to_constructor("top")
         main.place_order()
-        main.wait_for_order_number()
+        main.wait_for_real_order_number() 
         order_number = main.get_order_number()
         main.close_order_modal()
         main.go_to_order_feed()

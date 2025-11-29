@@ -22,7 +22,7 @@ class OrderFeedPage(BasePage):
 
     @allure.step("Получение счётчика 'Выполнено за сегодня'")
     def get_today_done(self, timeout=40):
-        self.wait_for_presence(OrderFeedPageLocators.TOTAL_COUNTER, timeout)
+        self.wait_for_presence(OrderFeedPageLocators.TOTAL_COUNTER , timeout)
         elements = self.find_all(OrderFeedPageLocators.TOTAL_COUNTER)
         for el in elements:
             try:
