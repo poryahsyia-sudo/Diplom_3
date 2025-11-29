@@ -4,6 +4,7 @@ from pages.main_page import MainPage
 from pages.order_feed_page import OrderFeedPage
 from pages.urls import BASE_URL
 
+
 @allure.feature("Лента заказов")
 class TestOrderFeed:
 
@@ -18,8 +19,7 @@ class TestOrderFeed:
         order_number = main.get_order_number()
         main.close_order_modal()
         main.go_to_order_feed()
-        feed.wait_until(lambda d: order_number in d.page_source, timeout=30)
-        assert order_number in driver.page_source, \
+        assert feed.is_order_in_feed(order_number), \
             f"Заказ {order_number} не найден в ленте заказов"
 
     @allure.story("Счётчик 'Выполнено за сегодня'")
@@ -57,3 +57,4 @@ class TestOrderFeed:
         counter_after = feed.get_total_done()
         assert counter_after >= counter_before + 1, \
             f"Счётчик 'Выполнено за всё время' не увеличился: before={counter_before}, after={counter_after}"
+        
