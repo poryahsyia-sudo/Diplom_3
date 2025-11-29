@@ -35,7 +35,7 @@ class BasePage:
     def wait_for_presence(self, locator, timeout=15):
         return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located(locator)
-        )   
+        )
 
     @allure.step("Ожидание невидимости элемента: {1}")
     def wait_for_invisibility(self, locator, timeout=15):
@@ -93,18 +93,18 @@ class BasePage:
         try:
             self.driver.execute_script(js, ingredient, constructor)
         except Exception:
-            # Fallback: классический ActionChains
             actions = ActionChains(self.driver)
             actions.click_and_hold(ingredient).move_to_element(constructor).pause(0.2).release().perform()
 
-
     @allure.step("Ожидание увеличения счётчика")
     def wait_counter_greater(self, counter_method, old_value, timeout=60):
+        @allure.step("Проверка, что значение счётчика увеличилось")
         def condition(driver):
             try:
                 return counter_method() > old_value
             except Exception:
                 return False
+
         WebDriverWait(self.driver, timeout, poll_frequency=2).until(
             condition,
             f"Счётчик не увеличился в течение {timeout} секунд (было {old_value})"
